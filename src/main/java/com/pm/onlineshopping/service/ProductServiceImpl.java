@@ -112,11 +112,12 @@ public class ProductServiceImpl implements ProductService {
 		}
 
 		// flush the product with the given ID
-		dataMapping(p.get(), theProduct);
+		updateMapping(p.get(), theProduct);
 		productRepository.flush();
 
 		return p.get();
 	}
+
 
 	@Override
 	public void deleteById(Long theId) {
@@ -142,6 +143,19 @@ public class ProductServiceImpl implements ProductService {
 		newProduct.setUnitsInStock(theProduct.getQuantity());
 		newProduct.setVendorId(theProduct.getVendorId());
 
+	}
+	
+
+	private void updateMapping(Product product, ProductDto theProduct) {
+		
+		product.setName(theProduct.getName());
+		//product.setActive(theProduct.get);
+		product.setDescription(theProduct.getDescription());
+		product.setUnitPrice(theProduct.getUnitPrice());
+		product.setImageUrl(theProduct.getImageUrl());
+		product.setUnitsInStock(theProduct.getQuantity());
+		product.setVendorId(theProduct.getVendorId());
+		
 	}
 
 	// Additional API end points implementation

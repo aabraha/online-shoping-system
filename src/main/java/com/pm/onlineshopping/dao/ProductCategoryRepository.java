@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import com.pm.onlineshopping.entity.ProductCategory;
 
 @Repository
-@CrossOrigin
+//@CrossOrigin
 public interface ProductCategoryRepository extends JpaRepository<ProductCategory, Long> {
 
 	public ProductCategory findByCategoryName(String categoryName);

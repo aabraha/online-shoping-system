@@ -15,7 +15,7 @@ import com.pm.onlineshopping.entity.Product;
 import net.bytebuddy.asm.Advice.OffsetMapping.Sort;
 
 @Repository
-@CrossOrigin
+//@CrossOrigin
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
 	List<Product> findByVendorId(Long vendorId);

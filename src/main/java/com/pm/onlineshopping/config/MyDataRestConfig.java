@@ -1,27 +1,23 @@
 package com.pm.onlineshopping.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
-import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
-import org.springframework.http.HttpMethod;
-
-import com.pm.onlineshopping.entity.Product;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class MyDataRestConfig implements RepositoryRestConfigurer{
-
-	@Override
-	public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
-
-		HttpMethod[] theUnsupportedActions = {HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE};
-		
-		// disable HTTP methods for product: POST, PUT and DELETE
-		config.getExposureConfiguration()
-				.forDomainType(Product.class)
-				.withItemExposure((metadata, httpMethods)->httpMethods.disable(theUnsupportedActions))
-				.withCollectionExposure((metadata, httpMethods)->httpMethods.disable(theUnsupportedActions));
-						
-	}
-
-	
+public class MyDataRestConfig {
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE")
+                        .allowedHeaders("*")
+                        .allowedOrigins("*");
+            }
+        };
+    }
 }
+
