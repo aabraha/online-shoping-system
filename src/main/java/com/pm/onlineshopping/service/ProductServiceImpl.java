@@ -241,7 +241,7 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public List<Product> findInactive() {
 
-		List<Product> products = productRepository.findByActive(true);
+		List<Product> products = productRepository.findByActive(false);
 		if(products.isEmpty())
 			throw new ProductNotFoundException("No inactive product");
 		
