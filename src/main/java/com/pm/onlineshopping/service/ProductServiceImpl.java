@@ -113,9 +113,9 @@ public class ProductServiceImpl implements ProductService {
 
 		// flush the product with the given ID
 		updateMapping(p.get(), theProduct);
-		productRepository.flush();
-
-		return p.get();
+		Product savedProduct = productRepository.save(p.get());
+		//System.out.println(p.get());
+		return savedProduct;
 	}
 
 
@@ -145,11 +145,11 @@ public class ProductServiceImpl implements ProductService {
 
 	}
 	
-
 	private void updateMapping(Product product, ProductDto theProduct) {
 		
 		product.setName(theProduct.getName());
-		//product.setActive(theProduct.get);
+		System.out.println("Active: " + theProduct.getActive());
+		product.setActive(theProduct.getActive());
 		product.setDescription(theProduct.getDescription());
 		product.setUnitPrice(theProduct.getUnitPrice());
 		product.setImageUrl(theProduct.getImageUrl());

@@ -53,7 +53,7 @@ public class Product {
 	@Column(name = "image_url")
 	private String imageUrl;
 	
-	@Column(name = "active")
+	@Column(name = "active", columnDefinition = "boolean default false")
 	private boolean active;
 	
 	@Column(name = "units_in_stock")

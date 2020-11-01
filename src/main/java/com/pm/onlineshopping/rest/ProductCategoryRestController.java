@@ -19,7 +19,6 @@ import com.pm.onlineshopping.entity.ProductCategory;
 import com.pm.onlineshopping.service.ProductCategoryService;
 
 @RestController
-//@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/")
 public class ProductCategoryRestController {
 
