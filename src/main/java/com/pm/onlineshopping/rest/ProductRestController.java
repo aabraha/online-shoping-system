@@ -35,9 +35,9 @@ public class ProductRestController {
 	}
 	
 	@GetMapping("/products/{id}")
-	public Product findById(@PathVariable Long id) {
+	public Product findByIdActive(@PathVariable Long id) {
 		
-		return productService.findById(id);
+		return productService.findByIdActive(id);
 	}
 	
 	@PostMapping("/api/products")
@@ -68,15 +68,21 @@ public class ProductRestController {
 		return productService.findByVendorId(vendorId);
 	}
 	
-	@GetMapping(value = "/products/search", params="categoryName")
+	@GetMapping(value = "/products/search", params= {"categoryName"})
 	public List<Product> findByCategoryName(@RequestParam("categoryName") String categoryName){
 		
 		return productService.findByCategoryName(categoryName);
 	}
-	@GetMapping(value = "/products/search", params="categoryId")
+	@GetMapping(value = "/products/search", params= {"categoryId"})
 	public List<Product> findByCategoryId(@RequestParam("categoryId") Long categoryId){
 		
 		return productService.findByCategoryId(categoryId);
+	}
+	
+	@GetMapping(value="/products/search", params = {"name"})
+	public List<Product> findByName(@RequestParam("name") String name){
+		
+		return productService.findByName(name);
 	}
 	
 	@GetMapping(value = "/api/products/search", params = "active")
@@ -84,11 +90,7 @@ public class ProductRestController {
 		
 		return productService.findByActive(active);
 	}
-	@GetMapping(value="/products/search", params = "name")
-	public List<Product> findByName(@RequestParam("name") String name){
-		
-		return productService.findByName(name);
-	}
+	
 	
 	@GetMapping(value = "/api/products/inactive")
 	public List<Product> findInactive(){

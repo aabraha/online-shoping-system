@@ -229,8 +229,12 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public List<Product> findByCategoryId(Long categoryId) {
+		List<Product> products = new ArrayList<Product>();
+		if(categoryId == 0) {
+			products = productRepository.findByActive(true);
+		}
 		
-		List<Product> products = productRepository.findByCategoryId(categoryId);
+		products = productRepository.findByCategoryId(categoryId);
 		
 		if(products.isEmpty())
 			throw new ProductNotFoundException("No product with category id: " + categoryId);
@@ -256,6 +260,7 @@ public class ProductServiceImpl implements ProductService {
 		if(products.isEmpty())
 			return null;
 		for(ProductDto p : products) {
+			p.setActive(true);
 			savedProduct = updateById(p , p.getId());
 			result.add(savedProduct);
 		}
