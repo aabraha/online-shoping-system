@@ -35,6 +35,6 @@ public class ProductDto {
 	private String imageUrl;
 	@Getter
 	private Boolean active;
-	private int quantity;//make it quantity
+	private int unitsInStock;//make it quantity
 	private Long vendorId;
 }

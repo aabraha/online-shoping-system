@@ -1,5 +1,7 @@
 package com.pm.onlineshopping.service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,8 +25,8 @@ public class ProductServiceImpl implements ProductService {
 	private ProductCategoryRepository productCategoryRepository;
 
 	@Override
-	public Page<Product> findAll(Pageable pageable) {
-		Page<Product> products = productRepository.findAll(pageable);
+	public Page<Product> findAllActive(Pageable pageable) {
+		Page<Product> products = productRepository.findByActive(true, pageable);
 		if (products.isEmpty())
 			throw new ProductNotFoundException("Empty record");
 
@@ -83,7 +85,7 @@ public class ProductServiceImpl implements ProductService {
 					if (p.getName().equals(theProduct.getName())) {
 						// update quantity
 						exist = true;
-						p.setUnitsInStock(p.getUnitsInStock() + theProduct.getQuantity());
+						p.setUnitsInStock(p.getUnitsInStock() + theProduct.getUnitsInStock());
 						productRepository.flush();
 						break;
 					}
@@ -114,7 +116,7 @@ public class ProductServiceImpl implements ProductService {
 		// flush the product with the given ID
 		updateMapping(p.get(), theProduct);
 		Product savedProduct = productRepository.save(p.get());
-		//System.out.println(p.get());
+		
 		return savedProduct;
 	}
 
@@ -133,29 +135,54 @@ public class ProductServiceImpl implements ProductService {
 
 	// common method to map entity to dto
 	private void dataMapping(Product newProduct, ProductDto theProduct) {
-		// newProduct.setCategory(theProduct.getCategory());
+		// validation
+		if(theProduct.getName() == null || 
+				theProduct.getUnitPrice().doubleValue() < 0 || 
+				theProduct.getUnitsInStock() < 0 || 
+				theProduct.getVendorId() <= 0) {
+			throw new ProductNotFoundException("Invalid entry");
+		}
 
 		newProduct.setName(theProduct.getName());
 		newProduct.setActive(false);
 		newProduct.setDescription(theProduct.getDescription());
 		newProduct.setUnitPrice(theProduct.getUnitPrice());
 		newProduct.setImageUrl(theProduct.getImageUrl());
-		newProduct.setUnitsInStock(theProduct.getQuantity());
+		newProduct.setUnitsInStock(theProduct.getUnitsInStock());
 		newProduct.setVendorId(theProduct.getVendorId());
 
 	}
 	
 	private void updateMapping(Product product, ProductDto theProduct) {
 		
+		// validation
+		if (theProduct.getName() == null || 
+				theProduct.getUnitPrice().doubleValue() < 0
+				|| theProduct.getUnitsInStock() < 0 || 
+				theProduct.getVendorId() <= 0) {
+			throw new ProductNotFoundException("Invalid entry");
+		}
 		product.setName(theProduct.getName());
-		System.out.println("Active: " + theProduct.getActive());
 		product.setActive(theProduct.getActive());
 		product.setDescription(theProduct.getDescription());
 		product.setUnitPrice(theProduct.getUnitPrice());
 		product.setImageUrl(theProduct.getImageUrl());
-		product.setUnitsInStock(theProduct.getQuantity());
+		
+		product.setUnitsInStock(theProduct.getUnitsInStock());
 		product.setVendorId(theProduct.getVendorId());
 		
+	}
+
+	// Deduct units in stock for an order
+	public Integer deductQuantity(int orderedQuantity, Long id) {
+		
+		// retrieve available unitsInStock
+		int available = productRepository.findById(id).get().getUnitsInStock();
+		// subtract deduct quantity if positive true else false
+		if(available - orderedQuantity < 0)
+			throw new ProductNotFoundException("Stock has not enough product");
+		
+		return available - orderedQuantity;
 	}
 
 	// Additional API end points implementation
@@ -187,6 +214,52 @@ public class ProductServiceImpl implements ProductService {
 			throw new ProductNotFoundException("No product with status: " + active);
 		
 		return products;
+	}
+
+	@Override
+	public List<Product> findByName(String name) {
+
+		List<Product> products = productRepository.findByNameLike(name);
+		
+		if(products.isEmpty())
+			throw new ProductNotFoundException("No product with name like: " + name);
+		
+		return products;
+	}
+
+	@Override
+	public List<Product> findByCategoryId(Long categoryId) {
+		
+		List<Product> products = productRepository.findByCategoryId(categoryId);
+		
+		if(products.isEmpty())
+			throw new ProductNotFoundException("No product with category id: " + categoryId);
+		
+		return products;
+	}
+
+	@Override
+	public List<Product> findInactive() {
+
+		List<Product> products = productRepository.findByActive(true);
+		if(products.isEmpty())
+			throw new ProductNotFoundException("No inactive product");
+		
+		return products;
+	}
+
+	@Override
+	public List<Product> updateProducts(List<ProductDto> products) {
+		
+		List<Product> result = new ArrayList<Product>();
+		Product savedProduct = new Product();
+		if(products.isEmpty())
+			return null;
+		for(ProductDto p : products) {
+			savedProduct = updateById(p , p.getId());
+			result.add(savedProduct);
+		}
+		return result;
 	}
 
 }

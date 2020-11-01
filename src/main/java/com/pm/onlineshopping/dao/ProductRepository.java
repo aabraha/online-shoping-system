@@ -15,7 +15,6 @@ import com.pm.onlineshopping.entity.Product;
 import net.bytebuddy.asm.Advice.OffsetMapping.Sort;
 
 @Repository
-//@CrossOrigin
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
 	List<Product> findByVendorId(Long vendorId);
@@ -28,5 +27,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	
 	Page<Product> findAll(Pageable pageable);
 
+	List<Product> findByNameLike(String name);
 
+	List<Product> findByCategoryId(Long categoryId);
+
+	Page<Product> findByActive(boolean b, Pageable pageable);
+	
 }

@@ -31,7 +31,7 @@ public class ProductRestController {
 	@GetMapping("/products")
 	public Page<Product> findAll(Pageable pageable){
 		
-		return productService.findAll(pageable);
+		return productService.findAllActive(pageable);
 	}
 	
 	@GetMapping("/products/{id}")
@@ -73,14 +73,34 @@ public class ProductRestController {
 		
 		return productService.findByCategoryName(categoryName);
 	}
+	@GetMapping(value = "/products/search", params="categoryId")
+	public List<Product> findByCategoryId(@RequestParam("categoryId") Long categoryId){
+		
+		return productService.findByCategoryId(categoryId);
+	}
 	
-	@GetMapping(value = "/products/search", params = "active")
+	@GetMapping(value = "/api/products/search", params = "active")
 	public List<Product> findByActive(@RequestParam("active") boolean active){
 		
 		return productService.findByActive(active);
 	}
+	@GetMapping(value="/products/search", params = "name")
+	public List<Product> findByName(@RequestParam("name") String name){
+		
+		return productService.findByName(name);
+	}
 	
+	@GetMapping(value = "/api/products/inactive")
+	public List<Product> findInactive(){
+		
+		return productService.findInactive();
+	}
 	
+	@PutMapping("/api/products/approve")
+	public List<Product> approveProducts(@RequestBody List<ProductDto> products){
+		
+		return productService.updateProducts(products);
+	}
 	
 	
 	

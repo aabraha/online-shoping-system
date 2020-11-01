@@ -11,7 +11,8 @@ import com.pm.onlineshopping.entity.Product;
 public interface ProductService {
 
 	//public List<Product> findAll();
-	public Page<Product> findAll(Pageable pageable);
+	//public Page<Product> findAll(Pageable pageable);
+	public Page<Product> findAllActive(Pageable pageable);	
 	
 	public Product findById(Long theId);
 	
@@ -25,5 +26,16 @@ public interface ProductService {
 
 	public List<Product> findByCategoryName(String categoryName);
 
-	public List<Product> findByActive(boolean active);	
+	public List<Product> findByActive(boolean active);
+
+	public List<Product> findByName(String name);
+
+	public List<Product> findByCategoryId(Long categoryId);
+
+	public List<Product> findInactive();
+
+	public List<Product> updateProducts(List<ProductDto> products);
+
+	
+
 }
