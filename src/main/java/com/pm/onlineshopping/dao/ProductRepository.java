@@ -17,22 +17,20 @@ import net.bytebuddy.asm.Advice.OffsetMapping.Sort;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
+	Page<Product> findAll(Pageable pageable);
 	List<Product> findByVendorId(Long vendorId);
 
 	Product save(Optional<Product> product);
 
 	List<Product> findByCategoryCategoryName(String categoryName);
+	Page<Product> findByCategoryId(Long categoryId, Pageable pageable);
 
 	List<Product> findByActive(boolean active);
-	
-	Page<Product> findAll(Pageable pageable);
-
-	List<Product> findByNameLike(String name);
-
-	List<Product> findByCategoryId(Long categoryId);
-
 	Page<Product> findByActive(boolean b, Pageable pageable);
 
-	Optional<Product> findByIdAndActiveTrue(Long theId);
-	
+	Product findByIdAndActiveTrue(Long theId);
+	Page<Product> findByActiveTrue(Pageable pageable);
+
+	List<Product> findByNameStartingWith(String name);
+	List<Product> findByNameLike(String name);
 }

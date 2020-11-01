@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -61,18 +60,12 @@ public class ProductRestController {
 		return "deleted product with id: " + id;
 	}
 	
-	// Additional API end points
-	@GetMapping("/api/products/{vendorId}")
-	public List<Product> findByVendorId(@PathVariable Long vendorId){
-				
-		return productService.findByVendorId(vendorId);
-	}
-	
+	// =========== Additional API end points =================//
 	
 	@GetMapping(value = "/products/search", params= {"categoryId"})
-	public List<Product> findByCategoryId(@RequestParam("categoryId") Long categoryId){
+	public Page<Product> findByCategoryId(@RequestParam("categoryId") Long categoryId, Pageable pageable){
 		
-		return productService.findByCategoryId(categoryId);
+		return productService.findByCategoryId(categoryId, pageable);
 	}
 	
 	@GetMapping(value="/products/search", params = {"name"})
@@ -104,6 +97,12 @@ public class ProductRestController {
 	public List<Product> approveProducts(@RequestBody List<ProductDto> products){
 		
 		return productService.updateProducts(products);
+	}
+	
+	@GetMapping("/api/products/{vendorId}")
+	public List<Product> findByVendorId(@PathVariable Long vendorId){
+				
+		return productService.findByVendorId(vendorId);
 	}
 	
 	

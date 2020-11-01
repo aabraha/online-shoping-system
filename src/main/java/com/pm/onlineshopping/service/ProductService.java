@@ -10,32 +10,20 @@ import com.pm.onlineshopping.entity.Product;
 
 public interface ProductService {
 
-	//public List<Product> findAll();
-	//public Page<Product> findAll(Pageable pageable);
 	public Page<Product> findAllActive(Pageable pageable);	
-	
-	public Product findById(Long theId);
-	
+	//public Product findById(Long theId);
 	public void save(ProductDto theProduct);
-	
 	public Product updateById(ProductDto theProduct, Long id);
 	
 	public void deleteById(Long theId);
-
 	public List<Product> findByVendorId(Long vendorId);
-
 	public List<Product> findByCategoryName(String categoryName);
-
 	public List<Product> findByActive(boolean active);
-
-	public List<Product> findByName(String name);
-
-	public List<Product> findByCategoryId(Long categoryId);
-
-	public List<Product> findInactive();
-
-	public List<Product> updateProducts(List<ProductDto> products);
-
 	public Product findByIdActive(Long id);
 	
+	public List<Product> findByName(String name);
+	public List<Product> findInactive();
+	public List<Product> updateProducts(List<ProductDto> products);
+	public Page<Product> findByCategoryId(Long categoryId, Pageable pageable);
+	//public List<Product> findByCategoryId(Long categoryId);	
 }

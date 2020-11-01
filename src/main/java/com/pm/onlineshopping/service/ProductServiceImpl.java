@@ -26,7 +26,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public Page<Product> findAllActive(Pageable pageable) {
-		Page<Product> products = productRepository.findByActive(true, pageable);
+		Page<Product> products = productRepository.findByActiveTrue(pageable);
 		if (products.isEmpty())
 			throw new ProductNotFoundException("Empty record");
 
@@ -34,20 +34,15 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public Product findById(Long theId) {
+	public Product findByIdActive(Long theId) {
 
-		Optional<Product> result = productRepository.findById(theId);
-
-		Product theProduct = null;
-
-		if (result.isPresent()) {
-			theProduct = result.get();
-		} else {
-			// didn't find the Product
+		Product result = productRepository.findByIdAndActiveTrue(theId);
+		
+		if (result== null) {
 			throw new ProductNotFoundException("Did not find product with id: " + theId);
 		}
 
-		return theProduct;
+		return result;
 	}
 
 	@Override
@@ -219,7 +214,7 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public List<Product> findByName(String name) {
 
-		List<Product> products = productRepository.findByNameLike(name);
+		List<Product> products = productRepository.findByNameStartingWith(name);
 		
 		if(products.isEmpty())
 			throw new ProductNotFoundException("No product with name like: " + name);
@@ -228,17 +223,19 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public List<Product> findByCategoryId(Long categoryId) {
-		List<Product> products = new ArrayList<Product>();
-		if(categoryId.longValue() == 0) {
-			products = productRepository.findByActive(true);
-		}
+	public Page<Product> findByCategoryId(Long categoryId, Pageable pageable) {
+		Page<Product> products = null;
 		
-		products = productRepository.findByCategoryId(categoryId);
+		if(categoryId.longValue() == 0) {
+			products = productRepository.findByActiveTrue(pageable);
+		}
+		else {
+			products = productRepository.findByCategoryId(categoryId, pageable);
+		}
 		
 		if(products.isEmpty())
 			throw new ProductNotFoundException("No product with category id: " + categoryId);
-		
+				
 		return products;
 	}
 
@@ -266,21 +263,4 @@ public class ProductServiceImpl implements ProductService {
 		}
 		return result;
 	}
-
-	@Override
-	public Product findByIdActive(Long theId) {
-		Optional<Product> result = productRepository.findByIdAndActiveTrue(theId);
-
-		Product theProduct = null;
-
-		if (result.isPresent()) {
-			theProduct = result.get();
-		} else {
-			// didn't find the Product
-			throw new ProductNotFoundException("Did not find product with id: " + theId);
-		}
-
-		return theProduct;
-	}
-
 }
