@@ -36,6 +36,6 @@ public interface ProductService {
 
 	public List<Product> updateProducts(List<ProductDto> products);
 
+	public Product findByIdActive(Long id);
 	
-
 }

@@ -262,4 +262,20 @@ public class ProductServiceImpl implements ProductService {
 		return result;
 	}
 
+	@Override
+	public Product findByIdActive(Long theId) {
+		Optional<Product> result = productRepository.findByIdAndActiveTrue(theId);
+
+		Product theProduct = null;
+
+		if (result.isPresent()) {
+			theProduct = result.get();
+		} else {
+			// didn't find the Product
+			throw new ProductNotFoundException("Did not find product with id: " + theId);
+		}
+
+		return theProduct;
+	}
+
 }

@@ -29,7 +29,7 @@ public class ProductRestController {
 	private ProductService productService;
 	
 	@GetMapping("/products")
-	public Page<Product> findAll(Pageable pageable){
+	public Page<Product> findAllActive(Pageable pageable){
 		
 		return productService.findAllActive(pageable);
 	}

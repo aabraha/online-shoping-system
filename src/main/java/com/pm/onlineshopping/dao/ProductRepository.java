@@ -32,5 +32,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	List<Product> findByCategoryId(Long categoryId);
 
 	Page<Product> findByActive(boolean b, Pageable pageable);
+
+	Optional<Product> findByIdAndActiveTrue(Long theId);
 	
 }
