@@ -230,7 +230,7 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public List<Product> findByCategoryId(Long categoryId) {
 		List<Product> products = new ArrayList<Product>();
-		if(categoryId == 0) {
+		if(categoryId.equals(0)) {
 			products = productRepository.findByActive(true);
 		}
 		
