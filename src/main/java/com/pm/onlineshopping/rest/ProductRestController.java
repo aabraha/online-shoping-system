@@ -68,11 +68,7 @@ public class ProductRestController {
 		return productService.findByVendorId(vendorId);
 	}
 	
-	@GetMapping(value = "/products/search", params= {"categoryName"})
-	public List<Product> findByCategoryName(@RequestParam("categoryName") String categoryName){
-		
-		return productService.findByCategoryName(categoryName);
-	}
+	
 	@GetMapping(value = "/products/search", params= {"categoryId"})
 	public List<Product> findByCategoryId(@RequestParam("categoryId") Long categoryId){
 		
@@ -83,6 +79,12 @@ public class ProductRestController {
 	public List<Product> findByName(@RequestParam("name") String name){
 		
 		return productService.findByName(name);
+	}
+	
+	@GetMapping(value = "/products/search", params= {"categoryName"})
+	public List<Product> findByCategoryName(@RequestParam("categoryName") String categoryName){
+		
+		return productService.findByCategoryName(categoryName);
 	}
 	
 	@GetMapping(value = "/api/products/search", params = "active")
