@@ -214,7 +214,7 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public List<Product> findByName(String name) {
 
-		List<Product> products = productRepository.findByNameStartingWith(name);
+		List<Product> products = productRepository.findByNameStartingWithAndActiveTrue(name);
 		
 		if(products.isEmpty())
 			throw new ProductNotFoundException("No product with name like: " + name);
@@ -250,16 +250,17 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public List<Product> updateProducts(List<ProductDto> products) {
+	public List<Long> updateProducts(List<Long> ids) {
 		
-		List<Product> result = new ArrayList<Product>();
-		Product savedProduct = new Product();
-		if(products.isEmpty())
+		List<Long> result = new ArrayList<>();
+		Optional<Product> savedProduct = null;
+		if(ids.isEmpty())
 			return null;
-		for(ProductDto p : products) {
-			p.setActive(true);
-			savedProduct = updateById(p , p.getId());
-			result.add(savedProduct);
+		for(Long id : ids) {
+			savedProduct  = productRepository.findById(id);
+			savedProduct.get().setActive(true);
+			productRepository.flush();
+			result.add(id);
 		}
 		return result;
 	}

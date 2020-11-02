@@ -31,6 +31,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	Product findByIdAndActiveTrue(Long theId);
 	Page<Product> findByActiveTrue(Pageable pageable);
 
-	List<Product> findByNameStartingWith(String name);
+	List<Product> findByNameStartingWithAndActiveTrue(String name);
 	List<Product> findByNameLike(String name);
 }
