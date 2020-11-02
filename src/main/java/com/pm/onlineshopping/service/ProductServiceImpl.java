@@ -168,18 +168,6 @@ public class ProductServiceImpl implements ProductService {
 		
 	}
 
-	// Deduct units in stock for an order
-	public Integer deductQuantity(int orderedQuantity, Long id) {
-		
-		// retrieve available unitsInStock
-		int available = productRepository.findById(id).get().getUnitsInStock();
-		// subtract deduct quantity if positive true else false
-		if(available - orderedQuantity < 0)
-			throw new ProductNotFoundException("Stock has not enough product");
-		
-		return available - orderedQuantity;
-	}
-
 	// Additional API end points implementation
 	@Override
 	public List<Product> findByVendorId(Long vendorId) {
@@ -250,7 +238,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public String updateProducts(List<Long> ids) {
+	public String approveProducts(List<Long> ids) {
 
 		List<Long> result = new ArrayList<Long>();
 		// list of inactive ids
