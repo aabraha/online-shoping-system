@@ -250,17 +250,16 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public List<Long> updateProducts(List<Long> ids) {
+	public List<Product> updateProducts(List<ProductDto> products) {
 		
-		List<Long> result = new ArrayList<>();
-		Optional<Product> savedProduct = null;
-		if(ids.isEmpty())
+		List<Product> result = new ArrayList<Product>();
+		Product savedProduct = new Product();
+		if(products.isEmpty())
 			return null;
-		for(Long id : ids) {
-			savedProduct  = productRepository.findById(id);
-			savedProduct.get().setActive(true);
-			productRepository.flush();
-			result.add(id);
+		for(ProductDto p : products) {
+			p.setActive(true);
+			//savedProduct = updateById(p , p.getId());
+			result.add(savedProduct);
 		}
 		return result;
 	}

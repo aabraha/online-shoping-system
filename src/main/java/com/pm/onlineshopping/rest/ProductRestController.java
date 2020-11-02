@@ -94,9 +94,9 @@ public class ProductRestController {
 	}
 	
 	@PutMapping("/api/products/approve")
-	public List<Long> approveProducts(@RequestBody List<Long> ids){
+	public List<Product> approveProducts(@RequestBody List<ProductDto> products){
 		
-		return productService.updateProducts(ids);
+		return productService.updateProducts(products);
 	}
 	
 	@GetMapping("/api/products/{vendorId}")
