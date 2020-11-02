@@ -62,22 +62,22 @@ public class ProductRestController {
 	
 	// =========== Additional API end points =================//
 	
-	@GetMapping(value = "/products/search", params= {"categoryId"})
-	public Page<Product> findByCategoryId(@RequestParam("categoryId") Long categoryId, Pageable pageable){
+	@GetMapping(value = "/products/searchByCategoryId/{id}")
+	public Page<Product> findByCategoryId(@PathVariable Long id, Pageable pageable){
 		
-		return productService.findByCategoryId(categoryId, pageable);
+		return productService.findByCategoryIdAndActiveTrue(id, pageable);
 	}
 	
-	@GetMapping(value="/products/search", params = {"name"})
-	public List<Product> findByName(@RequestParam("name") String name){
+	@GetMapping(value="/products/searchByName/{searchText}")
+	public List<Product> findByName(@PathVariable String searchText){
 		
-		return productService.findByName(name);
+		return productService.findByName(searchText);
 	}
 	
-	@GetMapping(value = "/products/search", params= {"categoryName"})
-	public List<Product> findByCategoryName(@RequestParam("categoryName") String categoryName){
+	@GetMapping(value = "/products/searchByCategoryName/{searchText}")
+	public List<Product> findByCategoryName(@PathVariable String searchText){
 		
-		return productService.findByCategoryName(categoryName);
+		return productService.findByCategoryName(searchText);
 	}
 	
 	@GetMapping(value = "/api/products/search", params = "active")

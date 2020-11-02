@@ -223,14 +223,14 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public Page<Product> findByCategoryId(Long categoryId, Pageable pageable) {
+	public Page<Product> findByCategoryIdAndActiveTrue(Long categoryId, Pageable pageable) {
 		Page<Product> products = null;
 		
 		if(categoryId.longValue() == 0) {
 			products = productRepository.findByActiveTrue(pageable);
 		}
 		else {
-			products = productRepository.findByCategoryId(categoryId, pageable);
+			products = productRepository.findByCategoryIdAndActiveTrue(categoryId, pageable);
 		}
 		
 		if(products.isEmpty())

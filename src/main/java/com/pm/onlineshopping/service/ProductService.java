@@ -24,6 +24,6 @@ public interface ProductService {
 	public List<Product> findByName(String name);
 	public List<Product> findInactive();
 	public List<Product> updateProducts(List<ProductDto> products);
-	public Page<Product> findByCategoryId(Long categoryId, Pageable pageable);
+	public Page<Product> findByCategoryIdAndActiveTrue(Long categoryId, Pageable pageable);
 	//public List<Product> findByCategoryId(Long categoryId);	
 }

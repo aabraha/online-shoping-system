@@ -23,7 +23,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	Product save(Optional<Product> product);
 
 	List<Product> findByCategoryCategoryName(String categoryName);
-	Page<Product> findByCategoryId(Long categoryId, Pageable pageable);
+	Page<Product> findByCategoryIdAndActiveTrue(Long categoryId, Pageable pageable);
 
 	List<Product> findByActive(boolean active);
 	Page<Product> findByActive(boolean b, Pageable pageable);
