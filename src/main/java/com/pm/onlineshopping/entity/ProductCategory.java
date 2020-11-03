@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.AllArgsConstructor;
@@ -40,7 +41,7 @@ public class ProductCategory {
 	@Column(name = "category_name", nullable=false, unique = true)
 	private String categoryName;
 	
-	@JsonManagedReference
+	@JsonBackReference
 	@JoinColumn(name="category_id")
 	@OneToMany(targetEntity = Product.class, cascade = CascadeType.ALL)//(cascade = CascadeType.ALL, mappedBy = "category")
 	private List<Product> products;
