@@ -49,9 +49,13 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public void save(ProductDto theProduct) {
+	public ResponseEntity<ProductSuccessResponse> save(ProductDto theProduct) {
 
 		Product newProduct = new Product();
+		ProductSuccessResponse success = new ProductSuccessResponse( 
+				HttpStatus.ACCEPTED.value(),
+				"Success",
+				System.currentTimeMillis());
 		dataMapping(newProduct, theProduct);
 
 		// a. checking catID and VendorID are invalid
@@ -100,6 +104,8 @@ public class ProductServiceImpl implements ProductService {
 
 			}
 		}
+		
+		return new ResponseEntity<ProductSuccessResponse>(success, HttpStatus.CREATED);
 	}
 
 	@Override
@@ -120,8 +126,12 @@ public class ProductServiceImpl implements ProductService {
 
 
 	@Override
-	public void deleteById(Long theId) {
-
+	public ResponseEntity<ProductSuccessResponse> deleteById(Long theId) {
+		
+		ProductSuccessResponse success = new ProductSuccessResponse( 
+				HttpStatus.ACCEPTED.value(),
+				"Success",
+				System.currentTimeMillis());
 		// Check if product is available with the given id
 		Optional<Product> theProduct = productRepository.findById(theId);
 		if (!theProduct.isPresent()) {
@@ -129,6 +139,8 @@ public class ProductServiceImpl implements ProductService {
 		}
 
 		productRepository.deleteById(theId);
+		
+		return new ResponseEntity<>(success, HttpStatus.ACCEPTED);
 	}
 
 	// common method to map entity to dto

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pm.onlineshopping.dto.ProductCategoryDto;
+import com.pm.onlineshopping.dto.ProductSuccessResponse;
 import com.pm.onlineshopping.entity.ProductCategory;
 import com.pm.onlineshopping.service.ProductCategoryService;
 
@@ -40,11 +41,11 @@ public class ProductCategoryRestController {
 	}
 	
 	@PostMapping("api/categories")
-	public ResponseEntity<String> save(@RequestBody ProductCategoryDto theCategory) {
+	public ResponseEntity<ProductSuccessResponse> save(@RequestBody ProductCategoryDto theCategory) {
 		
-		ProductCategoryService.save(theCategory);
 		
-		return new ResponseEntity<String>("Success", HttpStatus.CREATED);
+		
+		return ProductCategoryService.save(theCategory);
 	}
 	
 	@PutMapping("api/categories/{id}")
@@ -54,11 +55,11 @@ public class ProductCategoryRestController {
 	}
 	
 	@DeleteMapping("api/categories/{id}")
-	public String deleteById(@PathVariable Long id){
+	public ResponseEntity<ProductSuccessResponse> deleteById(@PathVariable Long id){
 		
-		ProductCategoryService.deleteById(id);
 		
-		return "deleted Category with id: " + id;
+		
+		return ProductCategoryService.deleteById(id);
 	}
 	
 	// Additiona API end points

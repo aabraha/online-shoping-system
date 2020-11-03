@@ -14,10 +14,10 @@ public interface ProductService {
 
 	public Page<Product> findAllActive(Pageable pageable);	
 	//public Product findById(Long theId);
-	public void save(ProductDto theProduct);
+	public ResponseEntity<ProductSuccessResponse> save(ProductDto theProduct);
 	public Product updateById(ProductDto theProduct, Long id);
 	
-	public void deleteById(Long theId);
+	public ResponseEntity<ProductSuccessResponse> deleteById(Long theId);
 	public List<Product> findByVendorId(Long vendorId);
 	public List<Product> findByCategoryName(String categoryName);
 	public List<Product> findByActive(boolean active);

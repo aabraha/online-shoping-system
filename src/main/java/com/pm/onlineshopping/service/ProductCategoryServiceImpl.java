@@ -4,12 +4,15 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.pm.onlineshopping.dao.ProductCategoryRepository;
 import com.pm.onlineshopping.dao.ProductRepository;
 import com.pm.onlineshopping.dto.ProductCategoryDto;
 import com.pm.onlineshopping.dto.ProductDto;
+import com.pm.onlineshopping.dto.ProductSuccessResponse;
 import com.pm.onlineshopping.entity.Product;
 import com.pm.onlineshopping.entity.ProductCategory;
 
@@ -46,10 +49,14 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 	}
 
 	@Override
-	public void save(ProductCategoryDto theProductCategory) {
+	public ResponseEntity<ProductSuccessResponse> save(ProductCategoryDto theProductCategory) {
 		
 		ProductCategory productCategory = new ProductCategory();
-		System.out.println("category section");
+		ProductSuccessResponse success = new ProductSuccessResponse( 
+				HttpStatus.ACCEPTED.value(),
+				"Success",
+				System.currentTimeMillis());
+		
 		if(theProductCategory.getCategoryName() == null) {
 			throw new ProductNotFoundException("Category name should be non empty");
 		}
@@ -64,6 +71,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 			productCategoryRepository.save(productCategory);
 		}
 		
+		return new ResponseEntity<ProductSuccessResponse>(success, HttpStatus.CREATED);
 	}
 
 	@Override
@@ -86,15 +94,21 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 	}
 
 	@Override
-	public void deleteById(Long theId) {
+	public ResponseEntity<ProductSuccessResponse> deleteById(Long theId) {
 		
+		ProductSuccessResponse success = new ProductSuccessResponse( 
+				HttpStatus.ACCEPTED.value(),
+				"Success",
+				System.currentTimeMillis());
 		// Check if product is available with the given id
 		Optional<ProductCategory> theProductCategory = productCategoryRepository.findById(theId);
 		if(!theProductCategory.isPresent()) {
 			throw new ProductNotFoundException("there is no product with the id: " + theId);
 		}
 		
-		productCategoryRepository.deleteById(theId);		
+		productCategoryRepository.deleteById(theId);
+		
+		return new ResponseEntity<ProductSuccessResponse>(success, HttpStatus.ACCEPTED);
 	}
 
 	// Additional API end point implementation

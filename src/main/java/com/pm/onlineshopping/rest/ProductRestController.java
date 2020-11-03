@@ -43,11 +43,11 @@ public class ProductRestController {
 	}
 	
 	@PostMapping("/api/products")
-	public String save(@RequestBody ProductDto theProduct) {
+	public ResponseEntity<ProductSuccessResponse> save(@RequestBody ProductDto theProduct) {
 		
-		productService.save(theProduct);
 		
-		return "save successfull";
+		
+		return productService.save(theProduct);
 	}
 	
 	@PutMapping("/api/products/{id}")
@@ -56,11 +56,11 @@ public class ProductRestController {
 		return productService.updateById(theProduct, id);
 	}
 	@DeleteMapping("/api/products/{id}")
-	public String deleteById(@PathVariable Long id){
+	public ResponseEntity<ProductSuccessResponse> deleteById(@PathVariable Long id){
 		
-		productService.deleteById(id);
 		
-		return "deleted product with id: " + id;
+		
+		return productService.deleteById(id);
 	}
 	
 	// =========== Additional API end points =================//
