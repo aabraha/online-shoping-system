@@ -15,8 +15,9 @@ import javax.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,6 +32,7 @@ import lombok.ToString;
 
 @Entity
 @Table(name="product")
+@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class Product {
 
 	@Id
@@ -38,8 +40,8 @@ public class Product {
 	@Column(name = "id")
 	private Long id;
 	
-	@JsonManagedReference
-	@ManyToOne(cascade = CascadeType.ALL)
+	//@JsonManagedReference
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	private ProductCategory category;
 	
 	@Column(name = "name")

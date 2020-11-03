@@ -22,7 +22,7 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 import com.pm.onlineshopping.dto.Order;
 
 
-@EnableKafka
+//@EnableKafka //=============== commented for the time being ==============//
 @Configuration
 public class KafkaConfig {
 

@@ -47,9 +47,9 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
 	@Override
 	public void save(ProductCategoryDto theProductCategory) {
-		System.out.println("here it is");	
-
+		
 		ProductCategory productCategory = new ProductCategory();
+		System.out.println("category section");
 		if(theProductCategory.getCategoryName() == null) {
 			throw new ProductNotFoundException("Category name should be non empty");
 		}
@@ -60,7 +60,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 		else {
 			productCategory.setCategoryName(theProductCategory.getCategoryName());
 			productCategory.setProducts(theProductCategory.getProducts());
-						System.out.println("here it is");	
+						
 			productCategoryRepository.save(productCategory);
 		}
 		
