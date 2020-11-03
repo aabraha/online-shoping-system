@@ -4,8 +4,10 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 
 import com.pm.onlineshopping.dto.ProductDto;
+import com.pm.onlineshopping.dto.ProductSuccessResponse;
 import com.pm.onlineshopping.entity.Product;
 
 public interface ProductService {
@@ -23,7 +25,7 @@ public interface ProductService {
 	
 	public List<Product> findByName(String name);
 	public List<Product> findInactive();
-	public String approveProducts(List<Long> ids);
+	public ResponseEntity<ProductSuccessResponse> approveProducts(List<Long> ids);
 	public Page<Product> findByCategoryIdAndActiveTrue(Long categoryId, Pageable pageable);
 	//public List<Product> findByCategoryId(Long categoryId);	
 }

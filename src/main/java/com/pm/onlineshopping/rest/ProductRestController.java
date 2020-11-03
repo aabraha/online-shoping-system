@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pm.onlineshopping.dto.ProductDto;
+import com.pm.onlineshopping.dto.ProductSuccessResponse;
 import com.pm.onlineshopping.entity.Product;
 import com.pm.onlineshopping.service.ProductService;
 
@@ -96,11 +97,9 @@ public class ProductRestController {
 	}
 	
 	@PutMapping("/api/products/approve")
-	public ResponseEntity<String> approveProducts(@RequestBody List<Long> ids){
-		
-		productService.approveProducts(ids);
-		
-		return new ResponseEntity<String>("Success", HttpStatus.ACCEPTED);
+	public ResponseEntity<ProductSuccessResponse> approveProducts(@RequestBody List<Long> ids){
+				
+		return productService.approveProducts(ids);
 	}
 	
 	@GetMapping("/api/products/{vendorId}")

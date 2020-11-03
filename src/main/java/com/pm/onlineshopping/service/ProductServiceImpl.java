@@ -8,11 +8,14 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.pm.onlineshopping.dao.ProductCategoryRepository;
 import com.pm.onlineshopping.dao.ProductRepository;
 import com.pm.onlineshopping.dto.ProductDto;
+import com.pm.onlineshopping.dto.ProductSuccessResponse;
 import com.pm.onlineshopping.entity.Product;
 import com.pm.onlineshopping.entity.ProductCategory;
 
@@ -238,9 +241,13 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public String approveProducts(List<Long> ids) {
+	public ResponseEntity<ProductSuccessResponse> approveProducts(List<Long> ids) {
 
 		List<Long> result = new ArrayList<Long>();
+		ProductSuccessResponse success = new ProductSuccessResponse( 
+				HttpStatus.ACCEPTED.value(),
+				"Success",
+				System.currentTimeMillis());
 		// list of inactive ids
 		for(Long i : ids) {
 			Optional<Product> p = productRepository.findById(i);
@@ -251,6 +258,6 @@ public class ProductServiceImpl implements ProductService {
 			
 		}
 		
-		return "success: " + result;
+		return new ResponseEntity<ProductSuccessResponse>(success, HttpStatus.ACCEPTED);
 	}
 }
