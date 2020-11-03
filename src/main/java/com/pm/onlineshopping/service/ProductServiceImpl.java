@@ -29,7 +29,9 @@ public class ProductServiceImpl implements ProductService {
 		Page<Product> products = productRepository.findByActiveTrue(pageable);
 		if (products.isEmpty())
 			throw new ProductNotFoundException("Empty record");
-
+		for(Product p: products) {
+			System.out.println(p.getCategory().getCategoryName());
+		}
 		return products;
 	}
 

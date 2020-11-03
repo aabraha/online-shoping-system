@@ -77,22 +77,22 @@ public class KafkaConfig {
 
 	//========== Kafka producer beans ===========//
 	@Bean
-	public ProducerFactory<String, String> producerFactory() {
+	public ProducerFactory<String, Order> producerFactory() {
 		
 		Map<String, Object> config = new HashMap<>();
 		
 		config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "ec2-18-207-140-130.compute-1.amazonaws.com:9092");
 		config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-		config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+		config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
 		
 		
 		return new DefaultKafkaProducerFactory<>(config);
 	}
 	
 	@Bean
-	public KafkaTemplate<String, String> kafkaTemplate(){
+	public KafkaTemplate<String, Order> kafkaTemplate(){
 		
-		return new KafkaTemplate<String, String>(producerFactory());
+		return new KafkaTemplate<String, Order>(producerFactory());
 	}
 	
 	

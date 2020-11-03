@@ -20,8 +20,10 @@ public class KafkaConsumer {
 	@Autowired
 	ProductRepository productRepository;
 	@Autowired
-	private KafkaTemplate<String, String> kafkaTemplate;
-	private static final String TOPIC = "Qty-Deduction-Status";
+	private KafkaTemplate<String, Order> kafkaTemplate;
+	private static final String TOPIC_SUCCESS = "Fail-Qty-Deduction";
+	private static final String TOPIC_FAILURE = "Order-Succeed";
+
 	
 	
 	@KafkaListener(topics = "Payment-Being-Paid", groupId = "product_id", containerFactory = "orderKafkaListenerFactory")
@@ -51,16 +53,16 @@ public class KafkaConsumer {
 						//there is any error on Tx roll back  
 						
 						//Kafka message produce failure
-						kafkaTemplate.send(TOPIC, "FAILURE");
+						kafkaTemplate.send(TOPIC_FAILURE, order);
 						break;
 					}
 				}
 				// kafka message produce success
-				kafkaTemplate.send(TOPIC, "SUCCESS");
+				kafkaTemplate.send(TOPIC_SUCCESS, new Order());
 			}
 			else {
 				// kafka message produce failure
-				kafkaTemplate.send(TOPIC, "FAILURE");
+				kafkaTemplate.send(TOPIC_FAILURE, new Order());
 			}
 		}	
 	}
