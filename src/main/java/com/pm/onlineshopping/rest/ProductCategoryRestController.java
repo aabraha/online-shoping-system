@@ -40,7 +40,7 @@ public class ProductCategoryRestController {
 		return ProductCategoryService.findById(id);
 	}
 	
-	@PostMapping("api/categories")
+	@PostMapping("/api/categories")
 	public ResponseEntity<ProductSuccessResponse> save(@RequestBody ProductCategoryDto theCategory) {
 		
 		
@@ -48,13 +48,13 @@ public class ProductCategoryRestController {
 		return ProductCategoryService.save(theCategory);
 	}
 	
-	@PutMapping("api/categories/{id}")
+	@PutMapping("/api/categories/{id}")
 	public ProductCategory updateById(@RequestBody ProductCategoryDto theCategory, @PathVariable Long id) {
 		
 		return ProductCategoryService.updateById(theCategory, id);
 	}
 	
-	@DeleteMapping("api/categories/{id}")
+	@DeleteMapping("/api/categories/{id}")
 	public ResponseEntity<ProductSuccessResponse> deleteById(@PathVariable Long id){
 		
 		

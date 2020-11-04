@@ -23,7 +23,6 @@ import com.pm.onlineshopping.entity.Product;
 import com.pm.onlineshopping.service.ProductService;
 
 @RestController
-
 @RequestMapping("/")
 public class ProductRestController {
 
