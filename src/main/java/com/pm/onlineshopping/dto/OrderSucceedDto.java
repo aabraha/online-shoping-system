@@ -11,10 +11,8 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Order {
+public class OrderSucceedDto {
 
 	private Long orderId;
-	private String userEmail;
-	private List<ProductDto> products;
-	
+	private List<EmailDto> emails;
 }

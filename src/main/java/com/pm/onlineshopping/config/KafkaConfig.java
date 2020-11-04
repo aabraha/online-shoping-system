@@ -7,6 +7,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
@@ -17,12 +18,13 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
-import org.springframework.kafka.support.serializer.JsonSerializer;
+import org.springframework.web.client.RestTemplate;
 
 import com.pm.onlineshopping.dto.Order;
+import com.pm.onlineshopping.dto.OrderSucceedDto;
 
 
-//@EnableKafka //=============== commented for the time being ==============//
+@EnableKafka //=============== commented for the time being ==============//
 @Configuration
 public class KafkaConfig {
 
@@ -77,7 +79,7 @@ public class KafkaConfig {
 
 	//========== Kafka producer beans ===========//
 	@Bean
-	public ProducerFactory<String, Order> producerFactory() {
+	public ProducerFactory<String, Order> failureProducerFactory() {
 		
 		Map<String, Object> config = new HashMap<>();
 		
@@ -90,14 +92,39 @@ public class KafkaConfig {
 	}
 	
 	@Bean
-	public KafkaTemplate<String, Order> kafkaTemplate(){
+	public KafkaTemplate<String, Order> failureKafkaTemplate(){
 		
-		return new KafkaTemplate<String, Order>(producerFactory());
+		return new KafkaTemplate<String, Order>(failureProducerFactory());
 	}
 	
 	
+	@Bean
+	public ProducerFactory<String, OrderSucceedDto> successProducerFactory() {
+		
+		Map<String, Object> config = new HashMap<>();
+		
+		config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "ec2-18-207-140-130.compute-1.amazonaws.com:9092");
+		config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+		config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+		
+		
+		return new DefaultKafkaProducerFactory<>(config);
+	}
+	
+	@Bean
+	public KafkaTemplate<String, OrderSucceedDto> successKafkaTemplate(){
+		
+		return new KafkaTemplate<String, OrderSucceedDto>(successProducerFactory());
+	}
 	
 	
+	// RestTemplate bean creation
+	@Bean
+	@LoadBalanced
+	public RestTemplate getRestTemplate() {
+		
+		return new RestTemplate();
+	}
 	
 	
 	
