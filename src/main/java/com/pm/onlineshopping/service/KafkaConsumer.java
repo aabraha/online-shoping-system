@@ -10,11 +10,13 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.pm.onlineshopping.config.KafkaConfig;
 import com.pm.onlineshopping.dao.ProductRepository;
 import com.pm.onlineshopping.dto.EmailDto;
 import com.pm.onlineshopping.dto.Order;
@@ -25,6 +27,7 @@ import com.pm.onlineshopping.entity.Product;
 
 
 @Service
+//@PropertySource("classpath:application.properties")
 public class KafkaConsumer {
 
 	@Autowired
@@ -37,15 +40,12 @@ public class KafkaConsumer {
 	private KafkaTemplate<String, OrderSucceedDto> successKafkaTemplate;
 	private static final String TOPIC_SUCCESS = "Fail-Qty-Deduction ";
 	private static final String TOPIC_FAILURE = "Order-Succeed";
-	@Value("${url.user}")
-	private String urlUser;
-	@Value("${email.body.customer}")
-	private String emailBodyCustomer;
-	@Value("${email.body.vendor}")
-	private String emailBodyVendor;
-	@Value("${email.from.eCommerce")
-	private String emailFromECommerce;
 	
+	KafkaConfig config = new KafkaConfig();
+	private String urlUser = config.getUrlUser();
+	private String emailBodyCustomer = config.getEmailBodyCustomer();
+	private String emailBodyVendor = config.getEmailBodyVendor();
+	private String emailFromECommerce = config.getEmailFromECommerce();
 	
 	@KafkaListener(topics = "Payment-Being-Paid", groupId = "product_id", containerFactory = "orderKafkaListenerFactory")
 	public void orderConsumer(Order order) {
@@ -108,7 +108,7 @@ public class KafkaConsumer {
 		EmailDto emailDto = new EmailDto();
 		emailDto.setFrom(emailFromECommerce);
 		
-		// retrieve users	
+		// retrieve users from user microservice	
 		List<Vendor> users = Arrays.asList(restTemplate.getForObject(urlUser, Vendor[].class));
 		// identify vendor id lists
 		for(Product product : products) {

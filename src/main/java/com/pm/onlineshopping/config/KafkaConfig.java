@@ -7,6 +7,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,11 +24,23 @@ import org.springframework.web.client.RestTemplate;
 import com.pm.onlineshopping.dto.Order;
 import com.pm.onlineshopping.dto.OrderSucceedDto;
 
+import lombok.Getter;
+
 
 @EnableKafka //=============== commented for the time being ==============//
 @Configuration
+@Getter
 public class KafkaConfig {
 
+	@Value("${url.user}")
+	private String urlUser;
+	@Value("${email.body.customer}")
+	private String emailBodyCustomer;
+	@Value("${email.body.vendor}")
+	private String emailBodyVendor;
+	@Value("${email.from.eCommerce")
+	private String emailFromECommerce;
+	
 	@Bean
 	public ConsumerFactory<String, String> consumerFactory(){
 		
