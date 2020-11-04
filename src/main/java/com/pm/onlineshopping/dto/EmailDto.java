@@ -1,7 +1,6 @@
 package com.pm.onlineshopping.dto;
 
-import java.util.List;
-import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,8 +13,8 @@ import lombok.ToString;
 @ToString
 public class EmailDto {
 	
+	private String from;
 	private String to;
-	private final String from = "info@shopping.com";
 	private String emailBody;
 
 }

@@ -43,6 +43,8 @@ public class KafkaConsumer {
 	private String emailBodyCustomer;
 	@Value("${email.body.vendor}")
 	private String emailBodyVendor;
+	@Value("${email.from.eCommerce")
+	private String emailFromECommerce;
 	
 	
 	@KafkaListener(topics = "Payment-Being-Paid", groupId = "product_id", containerFactory = "orderKafkaListenerFactory")
@@ -104,6 +106,7 @@ public class KafkaConsumer {
 		Long vendorId;
 		List<EmailDto> emailDtos = new ArrayList<>();
 		EmailDto emailDto = new EmailDto();
+		emailDto.setFrom(emailFromECommerce);
 		
 		// retrieve users	
 		List<Vendor> users = Arrays.asList(restTemplate.getForObject(urlUser, Vendor[].class));
