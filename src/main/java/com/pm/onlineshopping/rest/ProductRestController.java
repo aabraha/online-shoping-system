@@ -119,36 +119,29 @@ public class ProductRestController {
 	private static final String PAYMENT = "Payment-Being-Paid";
 		public void producer() {
 			
-			System.out.println("payment producer entered");
-			Order order = new Order();
-			
-			List<ProductKafkaDto> products = new ArrayList<ProductKafkaDto>();
-			ProductKafkaDto p1 = new ProductKafkaDto();
-			ProductKafkaDto p2 = new ProductKafkaDto();
-			ProductKafkaDto p3 = new ProductKafkaDto();
-			
-			
-			
-			p1.setQuantity(2);
-			p1.setId(Long.valueOf(2));
-			
-			p2.setQuantity(2);
-			p2.setId(Long.valueOf(2));
-			
-			p3.setQuantity(2);
-			p3.setId(Long.valueOf(2));
-				
-			products.add(p1);
-			products.add(p2);
-			products.add(p3);
-			
-			order.setOrderId(Long.valueOf(1));
-			order.setUserEmail("test@group3Ecommerce.com");
-			order.setProducts(products);
-			
-			// this is payment producer for test
-			paymentKafkaTemplate.send(PAYMENT, order);
-			System.err.println("payment event generated");
+		/*
+		 * System.out.println("payment producer entered"); Order order = new Order();
+		 * 
+		 * List<ProductKafkaDto> products = new ArrayList<ProductKafkaDto>();
+		 * ProductKafkaDto p1 = new ProductKafkaDto(); ProductKafkaDto p2 = new
+		 * ProductKafkaDto(); ProductKafkaDto p3 = new ProductKafkaDto();
+		 * 
+		 * 
+		 * 
+		 * p1.setQuantity(2); p1.setProductId(Long.valueOf(2));
+		 * 
+		 * p2.setQuantity(2); p2.setId(Long.valueOf(2));
+		 * 
+		 * p3.setQuantity(2); p3.setId(Long.valueOf(2));
+		 * 
+		 * products.add(p1); products.add(p2); products.add(p3);
+		 * 
+		 * order.setOrderId(Long.valueOf(1));
+		 * order.setUserEmail("test@group3Ecommerce.com"); order.setProducts(products);
+		 * 
+		 * // this is payment producer for test paymentKafkaTemplate.send(PAYMENT,
+		 * order); System.err.println("payment event generated");
+		 */
 		}
 	
 		

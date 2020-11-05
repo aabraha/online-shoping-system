@@ -10,7 +10,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class ProductKafkaDto {
-	private Long id;
+	private Long productId;
 	private int quantity;
 
 }
