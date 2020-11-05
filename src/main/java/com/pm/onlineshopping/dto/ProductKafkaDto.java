@@ -1,7 +1,5 @@
 package com.pm.onlineshopping.dto;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,10 +9,8 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Order {
+public class ProductKafkaDto {
+	private Long id;
+	private int quantity;
 
-	private Long orderId;
-	private String userEmail;
-	private List<ProductKafkaDto> products;
-	
 }

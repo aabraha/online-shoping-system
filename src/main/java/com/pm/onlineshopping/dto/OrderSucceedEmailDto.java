@@ -11,8 +11,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class OrderSucceedDto {
+public class OrderSucceedEmailDto {
 
-	private Long orderId;
 	private List<EmailDto> emails;
 }

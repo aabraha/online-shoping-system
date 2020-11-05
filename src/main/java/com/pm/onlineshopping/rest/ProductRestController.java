@@ -20,8 +20,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pm.onlineshopping.dto.Order;
-import com.pm.onlineshopping.dto.OrderSucceedDto;
+import com.pm.onlineshopping.dto.OrderSucceedEmailDto;
 import com.pm.onlineshopping.dto.ProductDto;
+import com.pm.onlineshopping.dto.ProductKafkaDto;
 import com.pm.onlineshopping.dto.ProductSuccessResponse;
 import com.pm.onlineshopping.entity.Product;
 import com.pm.onlineshopping.service.ProductService;
@@ -35,7 +36,7 @@ public class ProductRestController {
 	
 	@GetMapping("/products")
 	public Page<Product> findAllActive(Pageable pageable){
-		producer();
+		//producer();
 		return productService.findAllActive(pageable);
 	}
 	
@@ -121,31 +122,21 @@ public class ProductRestController {
 			System.out.println("payment producer entered");
 			Order order = new Order();
 			
-			List<ProductDto> products = new ArrayList<ProductDto>();
-			ProductDto p1 = new ProductDto();
-			ProductDto p2 = new ProductDto();
-			ProductDto p3 = new ProductDto();
+			List<ProductKafkaDto> products = new ArrayList<ProductKafkaDto>();
+			ProductKafkaDto p1 = new ProductKafkaDto();
+			ProductKafkaDto p2 = new ProductKafkaDto();
+			ProductKafkaDto p3 = new ProductKafkaDto();
 			
-			p1.setActive(true);
-			p1.setCategoryId(Long.valueOf(5));
-			p1.setName("java 8");
-			p1.setUnitsInStock(2);
+			
+			
+			p1.setQuantity(2);
 			p1.setId(Long.valueOf(2));
-			p1.setVendorId(Long.valueOf(1));
 			
-			p2.setActive(true);
-			p2.setCategoryId(Long.valueOf(5));
-			p2.setName("java 8");
-			p2.setUnitsInStock(2);
+			p2.setQuantity(2);
 			p2.setId(Long.valueOf(2));
-			p2.setVendorId(Long.valueOf(1));
 			
-			p3.setActive(true);
-			p3.setCategoryId(Long.valueOf(6));
-			p3.setName("Dell laptop");
-			p3.setUnitsInStock(2);
-			p3.setId(Long.valueOf(3));
-			p3.setVendorId(Long.valueOf(1));
+			p3.setQuantity(2);
+			p3.setId(Long.valueOf(2));
 				
 			products.add(p1);
 			products.add(p2);

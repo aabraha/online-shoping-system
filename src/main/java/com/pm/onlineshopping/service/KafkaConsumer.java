@@ -20,8 +20,9 @@ import com.pm.onlineshopping.config.KafkaConfig;
 import com.pm.onlineshopping.dao.ProductRepository;
 import com.pm.onlineshopping.dto.EmailDto;
 import com.pm.onlineshopping.dto.Order;
-import com.pm.onlineshopping.dto.OrderSucceedDto;
+import com.pm.onlineshopping.dto.OrderSucceedEmailDto;
 import com.pm.onlineshopping.dto.ProductDto;
+import com.pm.onlineshopping.dto.ProductKafkaDto;
 import com.pm.onlineshopping.dto.Vendor;
 import com.pm.onlineshopping.entity.Product;
 
@@ -36,12 +37,12 @@ public class KafkaConsumer {
 	@Autowired
 	private RestTemplate restTemplate;
 	@Autowired
-	private KafkaTemplate<String, Order> failureKafkaTemplate;
+	private KafkaTemplate<String, Long> KafkaTemplate;
 	@Autowired
-	private KafkaTemplate<String, OrderSucceedDto> successKafkaTemplate;
+	private KafkaTemplate<String, OrderSucceedEmailDto> successKafkaEmailTemplate;
 	private static final String TOPIC_SUCCESS = "Fail-Qty-Deduction ";
 	private static final String TOPIC_FAILURE = "Order-Succeed";
-	
+	private static final String TOPIC_SUCCESS_Email = "Order-Succeed-Email";	
 	private static final String PAYMENT = "Payment-Being-Paid";
 	
 	KafkaConfig config = new KafkaConfig();
@@ -49,27 +50,28 @@ public class KafkaConsumer {
 	private String emailBodyCustomer = config.getEmailBodyCustomer();
 	private String emailBodyVendor = config.getEmailBodyVendor();
 	private String emailFromECommerce = config.getEmailFromECommerce();
-	
-	@KafkaListener(topics = "Payment-Being-Paid", groupId = "product_id", containerFactory = "orderKafkaListenerFactory")
+	//======================== continue =======================//
+	//@FeignClient(name = "user-service") public interface UserProxy {   @GetMapping("/user-service/users/{vendorIds}")  List<UserDto> getVendors(@PathVariable Set<Long> vendorIds);   UserDto getUser(Long useId);  }
+	@KafkaListener(topics = "Payment-Being-Paid", groupId = "product_id")
 	public void orderConsumer(Order order) {
 		System.err.println("event payment detected");
 
 		System.out.println("Consumed Model: " + order);
-		List<ProductDto> productDtos = new ArrayList<>();
+		List<ProductKafkaDto> productKafkaDtos = new ArrayList<>();
 		List<Product> products = new ArrayList<>();
 		//Map<Long, List<String>> vendors = new HashMap<>();
 		
-		productDtos = order.getProducts(); 
-		if(productDtos.isEmpty()) {
-			failureKafkaTemplate.send(TOPIC_FAILURE, order);
+		productKafkaDtos = order.getProducts(); 
+		if(productKafkaDtos.isEmpty()) {
+			KafkaTemplate.send(TOPIC_FAILURE, order.getOrderId());
 			return;
 		}
 		
 		// execute quantity deduction //
 		synchronized (order) {
 			boolean commit = true;
-			for(ProductDto product : productDtos) {
-				if(canDeductQuantity(product.getUnitsInStock(), product.getId())) {
+			for(ProductKafkaDto product : productKafkaDtos) {
+				if(canDeductQuantity(product.getQuantity(), product.getId())) {
 					commit = true;
 				}
 				else {
@@ -80,14 +82,14 @@ public class KafkaConsumer {
 			
 			if(commit) {
 				//execute transaction
-				for(ProductDto product : productDtos) {
+				for(ProductKafkaDto product : productKafkaDtos) {
 					Optional<Product> p = productRepository.findById(product.getId());
-					p.get().setUnitPrice(p.get().getUnitPrice().subtract(BigDecimal.valueOf(product.getUnitsInStock())));
+					p.get().setUnitPrice(p.get().getUnitPrice().subtract(BigDecimal.valueOf(product.getQuantity())));
 					if(!(p.isPresent())) {
 						//there is any error on Tx roll back  
 						
 						//Kafka message produce failure
-						failureKafkaTemplate.send(TOPIC_FAILURE, order);
+						KafkaTemplate.send(TOPIC_FAILURE, order.getOrderId());
 						break;
 					}
 					products.add(p.get());
@@ -100,7 +102,7 @@ public class KafkaConsumer {
 			}
 			else {
 				// kafka message produce failure
-				failureKafkaTemplate.send(TOPIC_FAILURE, order);
+				KafkaTemplate.send(TOPIC_FAILURE, order.getOrderId());
 			}
 		}	
 	}
@@ -120,10 +122,10 @@ public class KafkaConsumer {
 		for(Product product : products) {
 			vendorId = product.getVendorId();
 			if(map.containsKey(vendorId)) {
-				map.get(vendorId).put(product.getName(), getOrderQuantity(product.getName(), order));
+				map.get(vendorId).put(product.getName(), getOrderQuantity(product.getId(), order));
 			}
 			else {
-				internalMap.put(product.getName(), getOrderQuantity(product.getName(), order));
+				internalMap.put(product.getName(), getOrderQuantity(product.getId(), order));
 				map.put(vendorId, internalMap);
 			}
 		}
@@ -142,11 +144,12 @@ public class KafkaConsumer {
 		emailDtos.add(emailDto);
 		
 		// construct success payload
-		OrderSucceedDto succeed = new OrderSucceedDto();
+		OrderSucceedEmailDto succeed = new OrderSucceedEmailDto();
 		succeed.setEmails(emailDtos);
-		succeed.setOrderId(order.getOrderId());
+		
 		// kafka message produce success
-		successKafkaTemplate.send(TOPIC_SUCCESS, succeed);
+		successKafkaEmailTemplate.send(TOPIC_SUCCESS_Email, succeed);
+		KafkaTemplate.send(TOPIC_SUCCESS, order.getOrderId());
 	}
 
 	private String getCustomerEmail(Long key, List<Vendor> users) {
@@ -160,11 +163,11 @@ public class KafkaConsumer {
 				.findFirst().get();
 	}
 
-	private Integer getOrderQuantity(String name, Order order) {
-		List<ProductDto> productDtos = order.getProducts();
-		for(ProductDto productDto: productDtos) {
-			if(productDto.getName().equals(name)) {
-				return productDto.getUnitsInStock();
+	private Integer getOrderQuantity(Long id, Order order) {
+		List<ProductKafkaDto> productKafkaDtos = order.getProducts();
+		for(ProductKafkaDto productKafkaDto: productKafkaDtos) {
+			if(productKafkaDto.getId().equals(id)) {
+				return productKafkaDto.getQuantity();
 				
 			}
 		}
@@ -185,31 +188,21 @@ public class KafkaConsumer {
 	public void producer() {
 		Order order = new Order();
 		
-		List<ProductDto> products = new ArrayList<ProductDto>();
-		ProductDto p1 = new ProductDto();
-		ProductDto p2 = new ProductDto();
-		ProductDto p3 = new ProductDto();
+		List<ProductKafkaDto> products = new ArrayList<ProductKafkaDto>();
+		ProductKafkaDto p1 = new ProductKafkaDto();
+		ProductKafkaDto p2 = new ProductKafkaDto();
+		ProductKafkaDto p3 = new ProductKafkaDto();
 		
-		p1.setActive(true);
-		p1.setCategoryId(Long.valueOf(5));
-		p1.setName("java 8");
-		p1.setUnitsInStock(2);
+		
+		
+		p1.setQuantity(2);
 		p1.setId(Long.valueOf(2));
-		p1.setVendorId(Long.valueOf(1));
 		
-		p2.setActive(true);
-		p2.setCategoryId(Long.valueOf(5));
-		p2.setName("java 8");
-		p2.setUnitsInStock(2);
+		p2.setQuantity(2);
 		p2.setId(Long.valueOf(2));
-		p2.setVendorId(Long.valueOf(1));
 		
-		p3.setActive(true);
-		p3.setCategoryId(Long.valueOf(6));
-		p3.setName("Dell laptop");
-		p3.setUnitsInStock(2);
-		p3.setId(Long.valueOf(3));
-		p3.setVendorId(Long.valueOf(1));
+		p3.setQuantity(2);
+		p3.setId(Long.valueOf(2));
 			
 		products.add(p1);
 		products.add(p2);
@@ -220,7 +213,7 @@ public class KafkaConsumer {
 		order.setProducts(products);
 		
 		// this is payment producer for test
-		failureKafkaTemplate.send(PAYMENT, order);
+		KafkaTemplate.send(PAYMENT, order.getOrderId());
 		System.err.println("payment event generated");
 	}
 }
