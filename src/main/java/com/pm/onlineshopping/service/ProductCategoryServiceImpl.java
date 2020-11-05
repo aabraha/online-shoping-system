@@ -116,7 +116,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 	@Override
 	public ProductCategory findByCategoryName(String name) {
 
-		ProductCategory category = productCategoryRepository.findByCategoryName(name);
+		ProductCategory category = productCategoryRepository.findByCategoryNameStartsWith(name);
 		if(category == null)
 			throw new ProductNotFoundException("Category not found with name: " + name);
 		

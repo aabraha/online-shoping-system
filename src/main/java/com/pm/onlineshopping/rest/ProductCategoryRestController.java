@@ -62,7 +62,7 @@ public class ProductCategoryRestController {
 		return ProductCategoryService.deleteById(id);
 	}
 	
-	// Additiona API end points
+	// Additional API end points
 	@GetMapping("/categories/search")
 	public ProductCategory findByCategoryName(@RequestParam String categoryName){
 		

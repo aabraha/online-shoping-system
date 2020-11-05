@@ -12,6 +12,8 @@ import com.pm.onlineshopping.entity.ProductCategory;
 //@CrossOrigin
 public interface ProductCategoryRepository extends JpaRepository<ProductCategory, Long> {
 
-	public ProductCategory findByCategoryName(String categoryName);
+	public ProductCategory findByCategoryNameStartsWith(String categoryName);
+
+	public Object findByCategoryName(String categoryName);
 
 }

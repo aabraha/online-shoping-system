@@ -25,9 +25,10 @@ import com.pm.onlineshopping.dto.ProductDto;
 import com.pm.onlineshopping.dto.Vendor;
 import com.pm.onlineshopping.entity.Product;
 
+import lombok.Getter;
+
 
 @Service
-//@PropertySource("classpath:application.properties")
 public class KafkaConsumer {
 
 	@Autowired
@@ -41,6 +42,8 @@ public class KafkaConsumer {
 	private static final String TOPIC_SUCCESS = "Fail-Qty-Deduction ";
 	private static final String TOPIC_FAILURE = "Order-Succeed";
 	
+	private static final String PAYMENT = "Payment-Being-Paid";
+	
 	KafkaConfig config = new KafkaConfig();
 	private String urlUser = config.getUrlUser();
 	private String emailBodyCustomer = config.getEmailBodyCustomer();
@@ -49,6 +52,8 @@ public class KafkaConsumer {
 	
 	@KafkaListener(topics = "Payment-Being-Paid", groupId = "product_id", containerFactory = "orderKafkaListenerFactory")
 	public void orderConsumer(Order order) {
+		System.err.println("event payment detected");
+
 		System.out.println("Consumed Model: " + order);
 		List<ProductDto> productDtos = new ArrayList<>();
 		List<Product> products = new ArrayList<>();
@@ -78,7 +83,7 @@ public class KafkaConsumer {
 				for(ProductDto product : productDtos) {
 					Optional<Product> p = productRepository.findById(product.getId());
 					p.get().setUnitPrice(p.get().getUnitPrice().subtract(BigDecimal.valueOf(product.getUnitsInStock())));
-					if(!(p.isPresent() && productRepository.save(p.get()) != null)) {
+					if(!(p.isPresent())) {
 						//there is any error on Tx roll back  
 						
 						//Kafka message produce failure
@@ -88,6 +93,7 @@ public class KafkaConsumer {
 					products.add(p.get());
 				}
 				//compose email and send success kafka event
+				productRepository.flush();
 				composeEmail(order, products);
 				
 				
@@ -175,4 +181,46 @@ public class KafkaConsumer {
 			
 			return true;
 		}
+	// Testing producer event Payment-Being-Paid
+	public void producer() {
+		Order order = new Order();
+		
+		List<ProductDto> products = new ArrayList<ProductDto>();
+		ProductDto p1 = new ProductDto();
+		ProductDto p2 = new ProductDto();
+		ProductDto p3 = new ProductDto();
+		
+		p1.setActive(true);
+		p1.setCategoryId(Long.valueOf(5));
+		p1.setName("java 8");
+		p1.setUnitsInStock(2);
+		p1.setId(Long.valueOf(2));
+		p1.setVendorId(Long.valueOf(1));
+		
+		p2.setActive(true);
+		p2.setCategoryId(Long.valueOf(5));
+		p2.setName("java 8");
+		p2.setUnitsInStock(2);
+		p2.setId(Long.valueOf(2));
+		p2.setVendorId(Long.valueOf(1));
+		
+		p3.setActive(true);
+		p3.setCategoryId(Long.valueOf(6));
+		p3.setName("Dell laptop");
+		p3.setUnitsInStock(2);
+		p3.setId(Long.valueOf(3));
+		p3.setVendorId(Long.valueOf(1));
+			
+		products.add(p1);
+		products.add(p2);
+		products.add(p3);
+		
+		order.setOrderId(Long.valueOf(1));
+		order.setUserEmail("test@group3Ecommerce.com");
+		order.setProducts(products);
+		
+		// this is payment producer for test
+		failureKafkaTemplate.send(PAYMENT, order);
+		System.err.println("payment event generated");
+	}
 }

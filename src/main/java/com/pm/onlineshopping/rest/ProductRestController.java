@@ -1,5 +1,6 @@
 package com.pm.onlineshopping.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pm.onlineshopping.dto.Order;
+import com.pm.onlineshopping.dto.OrderSucceedDto;
 import com.pm.onlineshopping.dto.ProductDto;
 import com.pm.onlineshopping.dto.ProductSuccessResponse;
 import com.pm.onlineshopping.entity.Product;
@@ -31,7 +35,7 @@ public class ProductRestController {
 	
 	@GetMapping("/products")
 	public Page<Product> findAllActive(Pageable pageable){
-		
+		producer();
 		return productService.findAllActive(pageable);
 	}
 	
@@ -108,9 +112,55 @@ public class ProductRestController {
 	}
 	
 	
+	// Testing producer event Payment-Being-Paid
+	@Autowired
+	private KafkaTemplate<String, Order> paymentKafkaTemplate;
+	private static final String PAYMENT = "Payment-Being-Paid";
+		public void producer() {
+			
+			System.out.println("payment producer entered");
+			Order order = new Order();
+			
+			List<ProductDto> products = new ArrayList<ProductDto>();
+			ProductDto p1 = new ProductDto();
+			ProductDto p2 = new ProductDto();
+			ProductDto p3 = new ProductDto();
+			
+			p1.setActive(true);
+			p1.setCategoryId(Long.valueOf(5));
+			p1.setName("java 8");
+			p1.setUnitsInStock(2);
+			p1.setId(Long.valueOf(2));
+			p1.setVendorId(Long.valueOf(1));
+			
+			p2.setActive(true);
+			p2.setCategoryId(Long.valueOf(5));
+			p2.setName("java 8");
+			p2.setUnitsInStock(2);
+			p2.setId(Long.valueOf(2));
+			p2.setVendorId(Long.valueOf(1));
+			
+			p3.setActive(true);
+			p3.setCategoryId(Long.valueOf(6));
+			p3.setName("Dell laptop");
+			p3.setUnitsInStock(2);
+			p3.setId(Long.valueOf(3));
+			p3.setVendorId(Long.valueOf(1));
+				
+			products.add(p1);
+			products.add(p2);
+			products.add(p3);
+			
+			order.setOrderId(Long.valueOf(1));
+			order.setUserEmail("test@group3Ecommerce.com");
+			order.setProducts(products);
+			
+			// this is payment producer for test
+			paymentKafkaTemplate.send(PAYMENT, order);
+			System.err.println("payment event generated");
+		}
 	
-	
-	
+		
 	
 	
 	
