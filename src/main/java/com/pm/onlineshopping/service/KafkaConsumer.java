@@ -51,7 +51,7 @@ public class KafkaConsumer {
 	private KafkaTemplate<String, OrderSucceedEmailDto> successKafkaEmailTemplate;
 	private static final String TOPIC_SUCCESS = "Order-Succeed";
 	private static final String TOPIC_FAILURE = "Fail-Qty-Deduction";
-	private static final String TOPIC_SUCCESS_Email = "Order-Succeed-Email";	
+	private static final String TOPIC_SUCCESS_EMAIL = "Order-Succeed-Email";	
 	private static final String PAYMENT = "Payment-Being-Paid";
 	
 	
@@ -92,7 +92,6 @@ public class KafkaConsumer {
 					Optional<Product> p = productRepository.findById(product.getProductId());
 					if(!(p.isPresent())) {
 						
-						//Kafka message produce failure
 						flag = true;
 						break;
 					}
@@ -126,13 +125,13 @@ public class KafkaConsumer {
 		Map<String, Integer> internalMap = new HashMap<>();
 		Long vendorId;
 		List<EmailDto> emailDtos = new ArrayList<>();
+		System.err.println("entered user service");
+		List<Vendor> users = new ArrayList<Vendor>();
 		EmailDto emailDto = new EmailDto();
 		emailDto.setFrom(emailFromECommerce);
 		
 		// retrieve users from user microservice	
-		System.err.println("entered user service");
-		List<Vendor> users = new ArrayList<Vendor>();
-		users = Arrays.asList(restTemplate.getForObject("https://pm-user-service-v2.herokuapp.com/api/users", Vendor[].class));
+		users = Arrays.asList(restTemplate.getForObject(userService, Vendor[].class));
 		System.err.println("executed user service");
 		
 		// identify vendor id lists
@@ -165,7 +164,7 @@ public class KafkaConsumer {
 		succeed.setEmails(emailDtos);
 		
 		// kafka message produce success
-		successKafkaEmailTemplate.send(TOPIC_SUCCESS_Email, succeed);
+		successKafkaEmailTemplate.send(TOPIC_SUCCESS_EMAIL, succeed);
 		
 	}
 
@@ -225,4 +224,5 @@ public class KafkaConsumer {
 	 * // this is payment producer for test KafkaTemplate.send(PAYMENT,
 	 * order.getOrderId()); System.err.println("payment event generated"); }
 	 */
+	
 }
