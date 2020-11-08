@@ -43,7 +43,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 		} 
 		else {
 			// didn't find the ProductCategory
-			 throw new ProductNotFoundException("Did not find product id - " + theId);
+			 throw new ProductNotFoundException("Did not find category id - " + theId);
 		}
 		
 		return theProductCategory;
@@ -58,7 +58,9 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 				"Success",
 				System.currentTimeMillis());
 		
-		if(theProductCategory.getCategoryName() == null) {
+		if(theProductCategory == null || theProductCategory.getCategoryName() == null ||
+				theProductCategory.getCategoryName().replaceAll(" ","").length() <= 1 ) {
+			System.out.println("categories");
 			throw new ProductNotFoundException("Category name should be non empty");
 		}
 		//check if the role exists by name if so response role exists and return;

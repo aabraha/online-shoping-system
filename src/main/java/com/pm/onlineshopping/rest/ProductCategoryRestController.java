@@ -42,9 +42,7 @@ public class ProductCategoryRestController {
 	
 	@PostMapping("/api/categories")
 	public ResponseEntity<ProductSuccessResponse> save(@RequestBody ProductCategoryDto theCategory) {
-		
-		
-		
+			
 		return ProductCategoryService.save(theCategory);
 	}
 	

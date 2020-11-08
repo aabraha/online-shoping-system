@@ -146,11 +146,13 @@ public class ProductServiceImpl implements ProductService {
 	// common method to map entity to dto
 	private void dataMapping(Product newProduct, ProductDto theProduct) {
 		// validation
-		if(theProduct.getName() == null || 
-				theProduct.getUnitPrice().doubleValue() < 0 || 
-				theProduct.getUnitsInStock() < 0 || 
+		if (theProduct == null ||
+				theProduct.getName().replaceAll(" ", "").length() <= 1 || 
+				theProduct.getName() == null ||
+				theProduct.getUnitPrice().doubleValue() < 0
+				|| theProduct.getUnitsInStock() < 0 || 
 				theProduct.getVendorId() <= 0) {
-			throw new ProductNotFoundException("Invalid entry");
+			throw new ProductNotFoundException("Invalid payload check your entry");
 		}
 
 		newProduct.setName(theProduct.getName());
@@ -166,7 +168,9 @@ public class ProductServiceImpl implements ProductService {
 	private void updateMapping(Product product, ProductDto theProduct) {
 		
 		// validation
-		if (theProduct.getName() == null || 
+		if (theProduct == null ||
+				theProduct.getName().replaceAll(" ", "").length() <= 1 || 
+				theProduct.getName() == null ||
 				theProduct.getUnitPrice().doubleValue() < 0
 				|| theProduct.getUnitsInStock() < 0 || 
 				theProduct.getVendorId() <= 0) {
@@ -197,7 +201,7 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public List<Product> findByCategoryName(String categoryName) {
 
-		List<Product> products = productRepository.findByCategoryCategoryName(categoryName);
+		List<Product> products = productRepository.findByCategoryCategoryNameStartsWith(categoryName);
 		if(products.isEmpty())
 			throw new ProductNotFoundException("No product found with category: " + categoryName);
 				

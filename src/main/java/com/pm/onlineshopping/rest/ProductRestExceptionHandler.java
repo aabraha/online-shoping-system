@@ -30,7 +30,7 @@ public class ProductRestExceptionHandler {
 		
 		ProductErrorResponse error = new ProductErrorResponse( 
 				HttpStatus.BAD_REQUEST.value(),
-				exc.getMessage(),
+				"invalid input check your payload!",//exc.getMessage(),
 				System.currentTimeMillis());
 		
 		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);

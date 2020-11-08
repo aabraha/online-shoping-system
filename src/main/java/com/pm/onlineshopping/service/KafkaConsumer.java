@@ -59,11 +59,9 @@ public class KafkaConsumer {
 	public void orderConsumer(Order order) {
 		System.err.println("event payment detected");
 		System.err.println("user service "+ userService);
-		//KafkaTemplate.send(TOPIC_SUCCESS, Long.valueOf(order.getOrderId()));
 		System.out.println("Consumed Model: " + order);
 		List<ProductKafkaDto> productKafkaDtos = new ArrayList<>();
 		List<Product> products = new ArrayList<>();
-		//Map<Long, List<String>> vendors = new HashMap<>();
 		
 		productKafkaDtos = order.getProducts(); 
 		if(productKafkaDtos.isEmpty()) {

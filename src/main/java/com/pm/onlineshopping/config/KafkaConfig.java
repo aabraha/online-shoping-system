@@ -15,8 +15,6 @@ import lombok.Getter;
 
 //@EnableKafka //=============== commented for the time being ==============//
 @Configuration
-
-@PropertySource("application.properties")
 public class KafkaConfig {
 
 	
@@ -25,8 +23,7 @@ public class KafkaConfig {
 		return new StringJsonMessageConverter();
 	}
 	
-	 // RestTemplate bean creation
-	  
+	 // RestTemplate bean creation	  
 	@Bean
 	public RestTemplate getRestTemplate() {
 	  

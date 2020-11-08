@@ -29,5 +29,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
 	List<Product> findByNameStartingWithAndActiveTrue(String name);
 	List<Product> findByNameLike(String name);
+	List<Product> findByCategoryCategoryNameStartsWith(String categoryName);
 	
 }
