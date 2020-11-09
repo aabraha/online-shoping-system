@@ -55,7 +55,7 @@ public class KafkaConsumer {
 	private static final String PAYMENT = "Payment-Being-Paid";
 	
 	
-	@KafkaListener(topics = "Payment-Being-Paid", groupId = "product_id")
+	//@KafkaListener(topics = "Payment-Being-Paid", groupId = "product_id")
 	public void orderConsumer(Order order) {
 		System.err.println("event payment detected");
 		System.err.println("user service "+ userService);
